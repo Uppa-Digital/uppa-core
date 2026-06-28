@@ -29,6 +29,15 @@ define( 'UPPA_CORE_VERSION', '1.0.0' );
 define( 'UPPA_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'UPPA_CORE_URI', plugin_dir_url( __FILE__ ) );
 
+/**
+ * Sentinel detected by the UPPA Base theme via function_exists().
+ *
+ * @return bool Always true when UPPA Core is active.
+ */
+function uppa_core_active(): bool {
+	return true;
+}
+
 register_activation_hook( __FILE__, [ 'UPPA_Activator', 'activate' ] );
 register_deactivation_hook( __FILE__, [ 'UPPA_Deactivator', 'deactivate' ] );
 

@@ -363,6 +363,32 @@ class UPPA_Admin {
 	}
 
 	// -------------------------------------------------------------------------
+	// Admin notices
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Display a notice when neither the active theme nor its parent is UPPA Base.
+	 *
+	 * Hooked onto admin_notices. The notice is dismissible and non-blocking —
+	 * all plugin functionality remains available regardless of the active theme.
+	 *
+	 * @return void
+	 */
+	public function maybe_show_theme_notice(): void {
+		$theme    = wp_get_theme();
+		$is_uppa  = 'UPPA Base' === $theme->get( 'Name' )
+				|| 'UPPA Base' === ( $theme->parent() ? $theme->parent()->get( 'Name' ) : '' );
+
+		if ( $is_uppa ) {
+			return;
+		}
+
+		echo '<div class="notice notice-warning is-dismissible"><p>' .
+			esc_html__( 'UPPA Core works best with the UPPA Base parent theme. Some integration features will not be available with the current theme.', 'uppa-core' ) .
+			'</p></div>';
+	}
+
+	// -------------------------------------------------------------------------
 	// Page renderers
 	// -------------------------------------------------------------------------
 

@@ -176,6 +176,7 @@ class UPPA_Core {
 		$this->loader->add_action( 'admin_enqueue_scripts', $this->admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $this->admin, 'register_menu' );
 		$this->loader->add_action( 'admin_init', $this->admin, 'register_settings' );
+		$this->loader->add_action( 'admin_notices', $this->admin, 'maybe_show_theme_notice' );
 	}
 
 	/**
