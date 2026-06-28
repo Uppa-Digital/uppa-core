@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<ruleset name="UPPA Core">
+
+    <description>PHPCS ruleset for the UPPA Core WordPress plugin.</description>
+
+    <!-- ── What to scan ─────────────────────────────────────────────────── -->
+
+    <file>.</file>
+
+    <arg name="extensions" value="php"/>
+
+    <!-- Exclude third-party and generated directories. -->
+    <exclude-pattern>node_modules/</exclude-pattern>
+    <exclude-pattern>vendor/</exclude-pattern>
+    <exclude-pattern>\.git/</exclude-pattern>
+
+    <!-- ── Rulesets ─────────────────────────────────────────────────────── -->
+
+    <!-- WordPress-Core: code style, naming conventions, security functions. -->
+    <rule ref="WordPress-Core"/>
+
+    <!-- WordPress-Docs: docblock requirements (class, method, property). -->
+    <rule ref="WordPress-Docs"/>
+
+    <!-- ── PHP version ───────────────────────────────────────────────────── -->
+
+    <!-- Inform PHPCS that we target PHP 8.1+.                              -->
+    <config name="testVersion" value="8.1-"/>
+
+    <!-- ── Namespace / prefix ───────────────────────────────────────────── -->
+
+    <!-- Every hook, option, and global must be prefixed with uppa_ or UPPA_. -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="uppa"/>
+                <element value="UPPA"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- ── Text domain ──────────────────────────────────────────────────── -->
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="uppa-core"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- ── Line length ──────────────────────────────────────────────────── -->
+
+    <!-- Raise the line-length warning to 160 chars (default 100 is too tight  -->
+    <!-- for deeply nested template code and long wp_remote_* calls).          -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit"        value="160"/>
+            <property name="absoluteLineLimit" value="200"/>
+        </properties>
+    </rule>
+
+    <!-- ── Selective exclusions ─────────────────────────────────────────── -->
+
+    <!-- Allow short ternary (?:) — used widely in view partials.           -->
+    <rule ref="WordPress.PHP.DisallowShortTernary">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Silence the "slow query" warning for the prefix-delete in           -->
+    <!-- uninstall.php — a LIKE query is unavoidable there.                  -->
+    <rule ref="WordPress.DB.SlowDBQuery">
+        <severity>0</severity>
+    </rule>
+
+</ruleset>
