@@ -10,6 +10,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Variables here are in the scope of UPPA_Admin::render_dashboard_page() (require_once inside a method),
+// not in global scope, so PrefixAllGlobals does not apply.
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 // --- Theme info ---
 $theme             = wp_get_theme();
 $theme_name        = $theme->get( 'Name' );
