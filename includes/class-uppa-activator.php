@@ -91,7 +91,7 @@ class UPPA_Activator {
 
 		// Deactivate the plugin before surfacing the error so it does not appear
 		// as "active" in the plugins list.
-		deactivate_plugins( plugin_basename( UPPA_CORE_DIR . '../uppa-core.php' ) );
+		deactivate_plugins( plugin_basename( UPPA_CORE_DIR . 'uppa-core.php' ) );
 
 		wp_die(
 			'<p>' . implode( '</p><p>', array_map( 'esc_html', $errors ) ) . '</p>',

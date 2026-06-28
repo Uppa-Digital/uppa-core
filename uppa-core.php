@@ -38,8 +38,16 @@ function uppa_core_active(): bool {
 	return true;
 }
 
+require_once UPPA_CORE_DIR . 'includes/class-uppa-activator.php';
+require_once UPPA_CORE_DIR . 'includes/class-uppa-deactivator.php';
+
 register_activation_hook( __FILE__, [ 'UPPA_Activator', 'activate' ] );
 register_deactivation_hook( __FILE__, [ 'UPPA_Deactivator', 'deactivate' ] );
 
-require_once UPPA_CORE_DIR . 'includes/class-uppa-core.php';
-UPPA_Core::get_instance()->run();
+add_action(
+	'plugins_loaded',
+	static function (): void {
+		require_once UPPA_CORE_DIR . 'includes/class-uppa-core.php';
+		UPPA_Core::get_instance()->run();
+	}
+);
