@@ -84,7 +84,7 @@ class UPPA_Asset_Utils {
 			'https://fonts.googleapis.com/css2'
 		);
 
-		wp_enqueue_style( $slug, esc_url_raw( $url ), [], null );
+		wp_enqueue_style( $slug, esc_url_raw( $url ), [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Google Fonts URLs are versioned by the API; a WP version string would break cache.
 
 		// Add the preconnect hint once per request.
 		if ( ! self::$gstatic_preconnect_added ) {
@@ -189,21 +189,17 @@ class UPPA_Asset_Utils {
 		add_action(
 			'wp_head',
 			static function () use ( $url, $as, $type ): void {
-				$tag = '<link rel="preload" href="' . esc_url( $url ) . '" as="' . esc_attr( $as ) . '"';
+				// Fonts need crossorigin even for same-origin files (browser uses anonymous CORS for @font-face).
+				$crossorigin = ( 'font' === $as ) ? ' crossorigin' : '';
+				$type_attr   = ( '' !== $type ) ? ' type="' . esc_attr( $type ) . '"' : '';
 
-				if ( '' !== $type ) {
-					$tag .= ' type="' . esc_attr( $type ) . '"';
-				}
-
-				// Fonts must include crossorigin even for same-origin files because
-				// the browser uses an anonymous CORS fetch for @font-face resources.
-				if ( 'font' === $as ) {
-					$tag .= ' crossorigin';
-				}
-
-				$tag .= '>' . "\n";
-
-				echo $tag; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped — tag built with esc_url/esc_attr above.
+				printf(
+					'<link rel="preload" href="%s" as="%s"%s%s>' . "\n",
+					esc_url( $url ),
+					esc_attr( $as ),
+					$type_attr,   // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_attr applied above.
+					$crossorigin  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static string ' crossorigin' or ''.
+				);
 			},
 			2 // Slightly after preconnect (priority 1) but before main wp_head content.
 		);

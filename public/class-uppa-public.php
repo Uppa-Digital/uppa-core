@@ -155,7 +155,7 @@ class UPPA_Public {
 	public function ajax_init_payment(): never {
 		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
 
-		$gateway = sanitize_key( $_POST['gateway'] ?? '' );
+		$gateway = sanitize_key( wp_unslash( $_POST['gateway'] ?? '' ) );
 
 		if ( ! in_array( $gateway, [ 'paystack', 'flutterwave' ], true ) ) {
 			wp_send_json_error(
@@ -205,7 +205,7 @@ class UPPA_Public {
 	public function ajax_verify_payment(): never {
 		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
 
-		$gateway = sanitize_key( $_POST['gateway'] ?? '' );
+		$gateway = sanitize_key( wp_unslash( $_POST['gateway'] ?? '' ) );
 
 		if ( ! in_array( $gateway, [ 'paystack', 'flutterwave' ], true ) ) {
 			wp_send_json_error(
@@ -215,7 +215,7 @@ class UPPA_Public {
 		}
 
 		if ( 'paystack' === $gateway ) {
-			$reference = sanitize_text_field( $_POST['reference'] ?? '' );
+			$reference = sanitize_text_field( wp_unslash( $_POST['reference'] ?? '' ) );
 
 			if ( '' === $reference ) {
 				wp_send_json_error(
@@ -227,7 +227,7 @@ class UPPA_Public {
 			$result = UPPA_Paystack::get_instance()->verify_transaction( $reference );
 
 		} else {
-			$transaction_id = sanitize_text_field( $_POST['transaction_id'] ?? '' );
+			$transaction_id = sanitize_text_field( wp_unslash( $_POST['transaction_id'] ?? '' ) );
 
 			if ( '' === $transaction_id ) {
 				wp_send_json_error(
@@ -266,27 +266,31 @@ class UPPA_Public {
 	 * @return array<string, mixed>|WP_Error
 	 */
 	private function init_paystack(): array|WP_Error {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified in calling public method.
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- wp_unslash applied inline below.
 		$args = [
-			'email'  => sanitize_email( $_POST['email'] ?? '' ),
-			'amount' => (int) ( $_POST['amount'] ?? 0 ),
+			'email'  => sanitize_email( wp_unslash( $_POST['email'] ?? '' ) ),
+			'amount' => (int) wp_unslash( $_POST['amount'] ?? 0 ),
 		];
 
 		if ( ! empty( $_POST['reference'] ) ) {
-			$args['reference'] = sanitize_text_field( $_POST['reference'] );
+			$args['reference'] = sanitize_text_field( wp_unslash( $_POST['reference'] ) );
 		}
 
 		if ( ! empty( $_POST['callback_url'] ) ) {
-			$args['callback_url'] = esc_url_raw( $_POST['callback_url'] );
+			$args['callback_url'] = esc_url_raw( wp_unslash( $_POST['callback_url'] ) );
 		}
 
 		if ( ! empty( $_POST['currency'] ) ) {
-			$args['currency'] = strtoupper( sanitize_text_field( $_POST['currency'] ) );
+			$args['currency'] = strtoupper( sanitize_text_field( wp_unslash( $_POST['currency'] ) ) );
 		}
 
 		if ( ! empty( $_POST['metadata'] ) && is_array( $_POST['metadata'] ) ) {
 			// Shallow sanitise metadata values — callers must not store raw HTML here.
-			$args['metadata'] = array_map( 'sanitize_text_field', $_POST['metadata'] );
+			$args['metadata'] = array_map( 'sanitize_text_field', wp_unslash( (array) $_POST['metadata'] ) );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 		return UPPA_Paystack::get_instance()->initialize_transaction( $args );
 	}
@@ -297,8 +301,10 @@ class UPPA_Public {
 	 * @return array<string, mixed>|WP_Error
 	 */
 	private function init_flutterwave(): array|WP_Error {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified in calling public method.
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- wp_unslash applied inline below.
 		// Customer sub-array — each field sanitised individually.
-		$customer_raw = is_array( $_POST['customer'] ?? null ) ? $_POST['customer'] : [];
+		$customer_raw = is_array( $_POST['customer'] ?? null ) ? wp_unslash( (array) $_POST['customer'] ) : [];
 		$customer     = [
 			'email'       => sanitize_email( $customer_raw['email'] ?? '' ),
 			'name'        => sanitize_text_field( $customer_raw['name'] ?? '' ),
@@ -306,31 +312,33 @@ class UPPA_Public {
 		];
 
 		$args = [
-			'amount'       => (float) ( $_POST['amount'] ?? 0 ),
-			'redirect_url' => esc_url_raw( $_POST['redirect_url'] ?? '' ),
+			'amount'       => (float) wp_unslash( $_POST['amount'] ?? 0 ),
+			'redirect_url' => esc_url_raw( wp_unslash( $_POST['redirect_url'] ?? '' ) ),
 			'customer'     => $customer,
 		];
 
 		if ( ! empty( $_POST['tx_ref'] ) ) {
-			$args['tx_ref'] = sanitize_text_field( $_POST['tx_ref'] );
+			$args['tx_ref'] = sanitize_text_field( wp_unslash( $_POST['tx_ref'] ) );
 		}
 
 		if ( ! empty( $_POST['currency'] ) ) {
-			$args['currency'] = strtoupper( sanitize_text_field( $_POST['currency'] ) );
+			$args['currency'] = strtoupper( sanitize_text_field( wp_unslash( $_POST['currency'] ) ) );
 		}
 
 		if ( ! empty( $_POST['payment_options'] ) ) {
-			$args['payment_options'] = sanitize_text_field( $_POST['payment_options'] );
+			$args['payment_options'] = sanitize_text_field( wp_unslash( $_POST['payment_options'] ) );
 		}
 
 		if ( ! empty( $_POST['customizations'] ) && is_array( $_POST['customizations'] ) ) {
-			$custom               = $_POST['customizations'];
+			$custom               = wp_unslash( (array) $_POST['customizations'] );
 			$args['customizations'] = [
 				'title'       => sanitize_text_field( $custom['title']       ?? '' ),
 				'description' => sanitize_text_field( $custom['description'] ?? '' ),
 				'logo'        => esc_url_raw( $custom['logo']               ?? '' ),
 			];
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 		return UPPA_Flutterwave::get_instance()->initialize_payment( $args );
 	}

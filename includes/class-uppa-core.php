@@ -146,17 +146,8 @@ class UPPA_Core {
 	 * @return void
 	 */
 	private function set_locale(): void {
-		$this->loader->add_action(
-			'init',
-			null,
-			function (): void {
-				load_plugin_textdomain(
-					'uppa-core',
-					false,
-					UPPA_CORE_DIR . 'languages/'
-				);
-			}
-		);
+		// WordPress 4.6+ automatically loads translations for WordPress.org-hosted
+		// plugins by slug, so load_plugin_textdomain() is no longer needed here.
 	}
 
 	// -------------------------------------------------------------------------

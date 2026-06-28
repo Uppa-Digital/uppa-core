@@ -99,7 +99,7 @@ class UPPA_CPT_Manager {
 			_doing_it_wrong(
 				__METHOD__,
 				esc_html__( 'UPPA_CPT_Manager::register() requires a non-empty "post_type" key.', 'uppa-core' ),
-				UPPA_CORE_VERSION
+				esc_html( UPPA_CORE_VERSION )
 			);
 			return;
 		}
@@ -165,7 +165,7 @@ class UPPA_CPT_Manager {
 			_doing_it_wrong(
 				__METHOD__,
 				esc_html__( 'UPPA_CPT_Manager::register_taxonomy() requires a non-empty "taxonomy" key.', 'uppa-core' ),
-				UPPA_CORE_VERSION
+				esc_html( UPPA_CORE_VERSION )
 			);
 			return;
 		}
@@ -174,7 +174,7 @@ class UPPA_CPT_Manager {
 			_doing_it_wrong(
 				__METHOD__,
 				esc_html__( 'UPPA_CPT_Manager::register_taxonomy() requires a non-empty "post_type" key.', 'uppa-core' ),
-				UPPA_CORE_VERSION
+				esc_html( UPPA_CORE_VERSION )
 			);
 			return;
 		}

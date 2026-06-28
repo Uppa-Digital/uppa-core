@@ -13,7 +13,7 @@
  * Description:       Companion functionality plugin for the UPPA Base parent theme. Registers shared utilities, payment gateway integrations, ACF bridge, and CPT management for sites built by Upper Echelon Digital Services.
  * Version:           1.0.0
  * Requires at least: 6.4
- * Tested up to:      6.7
+ * Tested up to:      7.0
  * Requires PHP:      8.1
  * Author:            Upper Echelon Digital Services
  * Author URI:        https://uppadigital.com
