@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_SEO_Utils
+ * Class UPPA_SEO_Utils
  */
-class Uppa_SEO_Utils {
+class UPPA_SEO_Utils {
 
 	/**
 	 * Generate a breadcrumb data array for the current request.

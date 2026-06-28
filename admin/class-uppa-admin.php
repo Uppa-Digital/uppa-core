@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Admin
+ * Class UPPA_Admin
  */
-class Uppa_Admin {
+class UPPA_Admin {
 
 	/**
 	 * Plugin version.
@@ -34,7 +34,7 @@ class Uppa_Admin {
 	public function enqueue_styles(): void {
 		wp_enqueue_style(
 			'uppa-core-admin',
-			UPPA_CORE_URL . 'admin/css/uppa-admin.css',
+			UPPA_CORE_URI . 'admin/css/uppa-admin.css',
 			[],
 			$this->version
 		);
@@ -66,6 +66,6 @@ class Uppa_Admin {
 	 * Render the main settings page.
 	 */
 	public function render_settings_page(): void {
-		require_once UPPA_CORE_PATH . 'admin/partials/uppa-admin-display.php';
+		require_once UPPA_CORE_DIR . 'admin/partials/uppa-admin-display.php';
 	}
 }

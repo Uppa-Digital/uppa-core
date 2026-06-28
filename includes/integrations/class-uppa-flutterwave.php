@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Flutterwave
+ * Class UPPA_Flutterwave
  */
-class Uppa_Flutterwave {
+class UPPA_Flutterwave {
 
 	/**
 	 * Flutterwave public key.

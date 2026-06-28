@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Image_Utils
+ * Class UPPA_Image_Utils
  */
-class Uppa_Image_Utils {
+class UPPA_Image_Utils {
 
 	/**
 	 * Return a fully-qualified srcset string for a given attachment ID.

@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Activator
+ * Class UPPA_Activator
  */
-class Uppa_Activator {
+class UPPA_Activator {
 
 	/**
 	 * Perform activation tasks (flush rewrite rules, create default options, etc.).

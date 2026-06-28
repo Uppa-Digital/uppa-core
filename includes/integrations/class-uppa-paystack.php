@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Paystack
+ * Class UPPA_Paystack
  */
-class Uppa_Paystack {
+class UPPA_Paystack {
 
 	/**
 	 * Paystack public key.
@@ -40,8 +40,8 @@ class Uppa_Paystack {
 	/**
 	 * Initialise a transaction and return the authorisation URL.
 	 *
-	 * @param string $email  Customer email address.
-	 * @param int    $amount Amount in the smallest currency unit (e.g. kobo).
+	 * @param string               $email  Customer email address.
+	 * @param int                  $amount Amount in the smallest currency unit (e.g. kobo).
 	 * @param array<string, mixed> $meta   Additional transaction metadata.
 	 * @return array<string, mixed> Paystack API response payload.
 	 */

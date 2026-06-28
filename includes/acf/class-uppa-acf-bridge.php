@@ -10,9 +10,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_ACF_Bridge
+ * Class UPPA_ACF_Bridge
  */
-class Uppa_ACF_Bridge {
+class UPPA_ACF_Bridge {
 
 	/**
 	 * Whether ACF (or ACF Pro) is currently available.
@@ -24,7 +24,7 @@ class Uppa_ACF_Bridge {
 	/**
 	 * Initialise ACF integrations.
 	 *
-	 * Called from Uppa_Core on `acf/init` when ACF is present.
+	 * Called from UPPA_Core on `acf/init` when ACF is present.
 	 */
 	public function init(): void {
 		if ( ! self::is_available() ) {

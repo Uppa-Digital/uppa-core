@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Public
+ * Class UPPA_Public
  */
-class Uppa_Public {
+class UPPA_Public {
 
 	/**
 	 * Plugin version.
@@ -34,7 +34,7 @@ class Uppa_Public {
 	public function enqueue_styles(): void {
 		wp_enqueue_style(
 			'uppa-core-public',
-			UPPA_CORE_URL . 'public/css/uppa-public.css',
+			UPPA_CORE_URI . 'public/css/uppa-public.css',
 			[],
 			$this->version
 		);
@@ -46,7 +46,7 @@ class Uppa_Public {
 	public function enqueue_scripts(): void {
 		wp_enqueue_script(
 			'uppa-core-public',
-			UPPA_CORE_URL . 'public/js/uppa-public.js',
+			UPPA_CORE_URI . 'public/js/uppa-public.js',
 			[],
 			$this->version,
 			true

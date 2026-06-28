@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Loader
+ * Class UPPA_Loader
  */
-class Uppa_Loader {
+class UPPA_Loader {
 
 	/**
 	 * Registered actions.
@@ -29,11 +29,11 @@ class Uppa_Loader {
 	/**
 	 * Add an action hook.
 	 *
-	 * @param string               $hook          The WordPress action hook name.
-	 * @param object|null          $component     Object that owns the callback (null for closures).
-	 * @param string|callable      $callback      Method name or callable.
-	 * @param int                  $priority      Hook priority.
-	 * @param int                  $accepted_args Number of arguments accepted.
+	 * @param string          $hook          The WordPress action hook name.
+	 * @param object|null     $component     Object that owns the callback (null for closures).
+	 * @param string|callable $callback      Method name or callable.
+	 * @param int             $priority      Hook priority.
+	 * @param int             $accepted_args Number of arguments accepted.
 	 */
 	public function add_action(
 		string $hook,
@@ -48,11 +48,11 @@ class Uppa_Loader {
 	/**
 	 * Add a filter hook.
 	 *
-	 * @param string               $hook          The WordPress filter hook name.
-	 * @param object|null          $component     Object that owns the callback (null for closures).
-	 * @param string|callable      $callback      Method name or callable.
-	 * @param int                  $priority      Hook priority.
-	 * @param int                  $accepted_args Number of arguments accepted.
+	 * @param string          $hook          The WordPress filter hook name.
+	 * @param object|null     $component     Object that owns the callback (null for closures).
+	 * @param string|callable $callback      Method name or callable.
+	 * @param int             $priority      Hook priority.
+	 * @param int             $accepted_args Number of arguments accepted.
 	 */
 	public function add_filter(
 		string $hook,

@@ -8,14 +8,14 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_CPT_Manager
+ * Class UPPA_CPT_Manager
  */
-class Uppa_CPT_Manager {
+class UPPA_CPT_Manager {
 
 	/**
 	 * Register all custom post types.
 	 *
-	 * Hook this onto the `init` action via Uppa_Loader.
+	 * Hook this onto the `init` action via UPPA_Loader.
 	 */
 	public function register(): void {
 		// TODO: register custom post types here in v2+.

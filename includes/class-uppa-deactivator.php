@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Deactivator
+ * Class UPPA_Deactivator
  */
-class Uppa_Deactivator {
+class UPPA_Deactivator {
 
 	/**
 	 * Perform deactivation tasks (flush rewrite rules, clear scheduled events, etc.).

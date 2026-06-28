@@ -8,16 +8,16 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Asset_Utils
+ * Class UPPA_Asset_Utils
  */
-class Uppa_Asset_Utils {
+class UPPA_Asset_Utils {
 
 	/**
 	 * Enqueue a versioned stylesheet from the plugin's public/css directory.
 	 *
-	 * @param string $handle   Script handle.
-	 * @param string $filename CSS filename (without path).
-	 * @param array<string> $deps    Handle dependencies.
+	 * @param string        $handle   Script handle.
+	 * @param string        $filename CSS filename (without path).
+	 * @param array<string> $deps     Handle dependencies.
 	 */
 	public static function enqueue_style( string $handle, string $filename, array $deps = [] ): void {
 		// TODO: implement versioned style enqueue.
@@ -26,10 +26,10 @@ class Uppa_Asset_Utils {
 	/**
 	 * Enqueue a versioned script from the plugin's public/js directory.
 	 *
-	 * @param string $handle   Script handle.
-	 * @param string $filename JS filename (without path).
-	 * @param array<string> $deps    Handle dependencies.
-	 * @param bool   $in_footer Whether to load in footer.
+	 * @param string        $handle    Script handle.
+	 * @param string        $filename  JS filename (without path).
+	 * @param array<string> $deps      Handle dependencies.
+	 * @param bool          $in_footer Whether to load in footer.
 	 */
 	public static function enqueue_script(
 		string $handle,

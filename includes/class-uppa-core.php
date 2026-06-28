@@ -10,9 +10,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Uppa_Core
+ * Class UPPA_Core
  */
-class Uppa_Core {
+class UPPA_Core {
 
 	/**
 	 * Singleton instance.
@@ -24,9 +24,9 @@ class Uppa_Core {
 	/**
 	 * The action/filter loader.
 	 *
-	 * @var Uppa_Loader
+	 * @var UPPA_Loader
 	 */
-	private Uppa_Loader $loader;
+	private UPPA_Loader $loader;
 
 	/**
 	 * Private constructor — use get_instance().
@@ -52,18 +52,20 @@ class Uppa_Core {
 	 * Require all dependency files.
 	 */
 	private function load_dependencies(): void {
-		require_once UPPA_CORE_PATH . 'includes/class-uppa-loader.php';
-		require_once UPPA_CORE_PATH . 'includes/cpt/class-uppa-cpt-manager.php';
-		require_once UPPA_CORE_PATH . 'includes/acf/class-uppa-acf-bridge.php';
-		require_once UPPA_CORE_PATH . 'includes/utilities/class-uppa-image-utils.php';
-		require_once UPPA_CORE_PATH . 'includes/utilities/class-uppa-seo-utils.php';
-		require_once UPPA_CORE_PATH . 'includes/utilities/class-uppa-asset-utils.php';
-		require_once UPPA_CORE_PATH . 'includes/integrations/class-uppa-paystack.php';
-		require_once UPPA_CORE_PATH . 'includes/integrations/class-uppa-flutterwave.php';
-		require_once UPPA_CORE_PATH . 'admin/class-uppa-admin.php';
-		require_once UPPA_CORE_PATH . 'public/class-uppa-public.php';
+		require_once UPPA_CORE_DIR . 'includes/class-uppa-loader.php';
+		require_once UPPA_CORE_DIR . 'includes/class-uppa-activator.php';
+		require_once UPPA_CORE_DIR . 'includes/class-uppa-deactivator.php';
+		require_once UPPA_CORE_DIR . 'includes/cpt/class-uppa-cpt-manager.php';
+		require_once UPPA_CORE_DIR . 'includes/acf/class-uppa-acf-bridge.php';
+		require_once UPPA_CORE_DIR . 'includes/utilities/class-uppa-image-utils.php';
+		require_once UPPA_CORE_DIR . 'includes/utilities/class-uppa-seo-utils.php';
+		require_once UPPA_CORE_DIR . 'includes/utilities/class-uppa-asset-utils.php';
+		require_once UPPA_CORE_DIR . 'includes/integrations/class-uppa-paystack.php';
+		require_once UPPA_CORE_DIR . 'includes/integrations/class-uppa-flutterwave.php';
+		require_once UPPA_CORE_DIR . 'admin/class-uppa-admin.php';
+		require_once UPPA_CORE_DIR . 'public/class-uppa-public.php';
 
-		$this->loader = new Uppa_Loader();
+		$this->loader = new UPPA_Loader();
 	}
 
 	/**
@@ -77,7 +79,7 @@ class Uppa_Core {
 				load_plugin_textdomain(
 					'uppa-core',
 					false,
-					UPPA_CORE_PATH . 'languages/'
+					UPPA_CORE_DIR . 'languages/'
 				);
 			}
 		);
@@ -87,7 +89,7 @@ class Uppa_Core {
 	 * Register all admin-side hooks.
 	 */
 	private function define_admin_hooks(): void {
-		$admin = new Uppa_Admin( UPPA_CORE_VERSION );
+		$admin = new UPPA_Admin( UPPA_CORE_VERSION );
 		$this->loader->add_action( 'admin_enqueue_scripts', $admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $admin, 'register_menu' );
@@ -97,7 +99,7 @@ class Uppa_Core {
 	 * Register all public-side hooks.
 	 */
 	private function define_public_hooks(): void {
-		$public = new Uppa_Public( UPPA_CORE_VERSION );
+		$public = new UPPA_Public( UPPA_CORE_VERSION );
 		$this->loader->add_action( 'wp_enqueue_scripts', $public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $public, 'enqueue_scripts' );
 	}
@@ -112,7 +114,7 @@ class Uppa_Core {
 	/**
 	 * Return the loader instance.
 	 */
-	public function get_loader(): Uppa_Loader {
+	public function get_loader(): UPPA_Loader {
 		return $this->loader;
 	}
 }
