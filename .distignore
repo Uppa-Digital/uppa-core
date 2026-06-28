@@ -1,0 +1,13 @@
+.github
+.git
+node_modules
+vendor
+phpcs.xml
+.phpcs.xml
+.eslintrc*
+.eslintignore
+package.json
+package-lock.json
+*.map
+.DS_Store
+dist

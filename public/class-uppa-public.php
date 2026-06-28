@@ -270,7 +270,7 @@ class UPPA_Public {
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- wp_unslash applied inline below.
 		$args = [
 			'email'  => sanitize_email( wp_unslash( $_POST['email'] ?? '' ) ),
-			'amount' => (int) wp_unslash( $_POST['amount'] ?? 0 ),
+			'amount' => absint( wp_unslash( $_POST['amount'] ?? 0 ) ),
 		];
 
 		if ( ! empty( $_POST['reference'] ) ) {
@@ -304,7 +304,7 @@ class UPPA_Public {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified in calling public method.
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- wp_unslash applied inline below.
 		// Customer sub-array — each field sanitised individually.
-		$customer_raw = is_array( $_POST['customer'] ?? null ) ? wp_unslash( (array) $_POST['customer'] ) : [];
+		$customer_raw = is_array( $_POST['customer'] ?? null ) ? wp_unslash( (array) $_POST['customer'] ) : []; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each field sanitised individually in $customer below.
 		$customer     = [
 			'email'       => sanitize_email( $customer_raw['email'] ?? '' ),
 			'name'        => sanitize_text_field( $customer_raw['name'] ?? '' ),
@@ -312,7 +312,7 @@ class UPPA_Public {
 		];
 
 		$args = [
-			'amount'       => (float) wp_unslash( $_POST['amount'] ?? 0 ),
+			'amount'       => (float) sanitize_text_field( wp_unslash( $_POST['amount'] ?? '0' ) ),
 			'redirect_url' => esc_url_raw( wp_unslash( $_POST['redirect_url'] ?? '' ) ),
 			'customer'     => $customer,
 		];
@@ -330,7 +330,7 @@ class UPPA_Public {
 		}
 
 		if ( ! empty( $_POST['customizations'] ) && is_array( $_POST['customizations'] ) ) {
-			$custom               = wp_unslash( (array) $_POST['customizations'] );
+			$custom               = wp_unslash( (array) $_POST['customizations'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each field sanitised individually below.
 			$args['customizations'] = [
 				'title'       => sanitize_text_field( $custom['title']       ?? '' ),
 				'description' => sanitize_text_field( $custom['description'] ?? '' ),
