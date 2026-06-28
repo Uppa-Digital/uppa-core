@@ -84,21 +84,23 @@ class UPPA_Flutterwave {
 	 * Instantiate the Flutterwave integration and load API keys.
 	 *
 	 * Key resolution order (first non-empty value wins):
-	 *   1. WordPress option  'uppa_flw_secret_key' / 'uppa_flw_public_key'.
+	 *   1. WordPress option  'uppa_core_settings' (keys: flw_secret_key / flw_public_key).
 	 *   2. PHP constant       FLW_SECRET_KEY / FLW_PUBLIC_KEY.
 	 *   3. Empty string       (methods return WP_Error when keys are absent).
 	 *
-	 * Storing keys in wp_options allows site administrators to manage them via
-	 * the settings UI without touching wp-config.php. The constant fallback
-	 * supports environment-variable-driven deployments (e.g. Bedrock / 12-factor).
+	 * Keys are stored inside the unified 'uppa_core_settings' array option managed
+	 * by the UPPA Core Settings page. The constant fallback supports
+	 * environment-variable-driven deployments (e.g. Bedrock / 12-factor).
 	 */
 	public function __construct() {
-		$this->secret_key = (string) get_option( 'uppa_flw_secret_key', '' );
+		$settings = (array) get_option( 'uppa_core_settings', [] );
+
+		$this->secret_key = $settings['flw_secret_key'] ?? '';
 		if ( '' === $this->secret_key && defined( 'FLW_SECRET_KEY' ) ) {
 			$this->secret_key = (string) FLW_SECRET_KEY;
 		}
 
-		$this->public_key = (string) get_option( 'uppa_flw_public_key', '' );
+		$this->public_key = $settings['flw_public_key'] ?? '';
 		if ( '' === $this->public_key && defined( 'FLW_PUBLIC_KEY' ) ) {
 			$this->public_key = (string) FLW_PUBLIC_KEY;
 		}

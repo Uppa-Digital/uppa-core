@@ -78,21 +78,23 @@ class UPPA_Paystack {
 	 * Instantiate the Paystack integration and load API keys.
 	 *
 	 * Key resolution order (first non-empty value wins):
-	 *   1. WordPress option  'uppa_paystack_secret_key' / 'uppa_paystack_public_key'.
+	 *   1. WordPress option  'uppa_core_settings' (keys: paystack_secret_key / paystack_public_key).
 	 *   2. PHP constant       PAYSTACK_SECRET_KEY / PAYSTACK_PUBLIC_KEY.
 	 *   3. Empty string       (methods return WP_Error when keys are absent).
 	 *
-	 * Storing keys in wp_options allows site administrators to manage them via
-	 * the settings UI without touching wp-config.php. The constant fallback
-	 * supports environment-variable-driven deployments (e.g. Bedrock / 12-factor).
+	 * Keys are stored inside the unified 'uppa_core_settings' array option managed
+	 * by the UPPA Core Settings page. The constant fallback supports
+	 * environment-variable-driven deployments (e.g. Bedrock / 12-factor).
 	 */
 	public function __construct() {
-		$this->secret_key = (string) get_option( 'uppa_paystack_secret_key', '' );
+		$settings = (array) get_option( 'uppa_core_settings', [] );
+
+		$this->secret_key = $settings['paystack_secret_key'] ?? '';
 		if ( '' === $this->secret_key && defined( 'PAYSTACK_SECRET_KEY' ) ) {
 			$this->secret_key = (string) PAYSTACK_SECRET_KEY;
 		}
 
-		$this->public_key = (string) get_option( 'uppa_paystack_public_key', '' );
+		$this->public_key = $settings['paystack_public_key'] ?? '';
 		if ( '' === $this->public_key && defined( 'PAYSTACK_PUBLIC_KEY' ) ) {
 			$this->public_key = (string) PAYSTACK_PUBLIC_KEY;
 		}
