@@ -25,17 +25,23 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'UPPA_CORE_VERSION', '1.0.0' );
-define( 'UPPA_CORE_DIR', plugin_dir_path( __FILE__ ) );
-define( 'UPPA_CORE_URI', plugin_dir_url( __FILE__ ) );
+defined( 'UPPA_CORE_VERSION' ) || define( 'UPPA_CORE_VERSION', '1.0.0' );
+defined( 'UPPA_CORE_DIR' )     || define( 'UPPA_CORE_DIR', plugin_dir_path( __FILE__ ) );
+defined( 'UPPA_CORE_URI' )     || define( 'UPPA_CORE_URI', plugin_dir_url( __FILE__ ) );
 
-/**
- * Sentinel detected by the UPPA Base theme via function_exists().
- *
- * @return bool Always true when UPPA Core is active.
- */
-function uppa_core_active(): bool {
-	return true;
+if ( ! function_exists( 'uppa_core_active' ) ) {
+	/**
+	 * Sentinel detected by the UPPA Base theme via function_exists().
+	 *
+	 * The theme's inc/compat.php defines this as a fallback stub that returns
+	 * false. This declaration (returning true) takes precedence when the plugin
+	 * is active, because plugins load before themes in WordPress.
+	 *
+	 * @return bool Always true when UPPA Core is active.
+	 */
+	function uppa_core_active(): bool {
+		return true;
+	}
 }
 
 require_once UPPA_CORE_DIR . 'includes/class-uppa-activator.php';
