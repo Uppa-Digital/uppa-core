@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Create release archive
+        run: |
+          mkdir -p dist
+          zip -r "dist/uppa-core-${{ steps.version.outputs.VERSION }}.zip" . \
+            --exclude "*.git*" \
+            --exclude "dist/*" \
+            --exclude ".github/*" \
+            --exclude "node_modules/*" \
+            --exclude "vendor/*" \
+            --exclude "*.DS_Store"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "UPPA Core ${{ steps.version.outputs.VERSION }}"
+          body_path: CHANGELOG.md
+          files: dist/uppa-core-${{ steps.version.outputs.VERSION }}.zip

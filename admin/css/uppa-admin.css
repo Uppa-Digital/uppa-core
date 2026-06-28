@@ -1,0 +1,9 @@
+/**
+ * UPPA Core — admin stylesheet.
+ *
+ * @package uppa-core
+ */
+
+.uppa-core-settings {
+	max-width: 800px;
+}
