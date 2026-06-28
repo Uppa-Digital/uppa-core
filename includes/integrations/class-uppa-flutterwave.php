@@ -42,6 +42,32 @@ defined( 'ABSPATH' ) || exit;
 class UPPA_Flutterwave {
 
 	// -------------------------------------------------------------------------
+	// Singleton
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Singleton instance.
+	 *
+	 * @var self|null
+	 */
+	private static ?self $instance = null;
+
+	/**
+	 * Return the single shared instance, creating it on first call.
+	 *
+	 * Keys are loaded once from the database and reused across all callers in
+	 * the same request, avoiding repeated get_option() calls.
+	 *
+	 * @return self
+	 */
+	public static function get_instance(): self {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	// -------------------------------------------------------------------------
 	// Constants
 	// -------------------------------------------------------------------------
 

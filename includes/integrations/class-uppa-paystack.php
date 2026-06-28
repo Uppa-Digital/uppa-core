@@ -40,11 +40,37 @@ class UPPA_Paystack {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Singleton instance.
+	 *
+	 * @var self|null
+	 */
+	private static ?self $instance = null;
+
+	/**
 	 * Paystack REST API base URL.
 	 *
 	 * @var string
 	 */
 	private string $base_url = 'https://api.paystack.co';
+
+	// -------------------------------------------------------------------------
+	// Singleton
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Return the single shared instance, creating it on first call.
+	 *
+	 * Keys are loaded once from the database and reused across all callers in
+	 * the same request, avoiding repeated get_option() calls.
+	 *
+	 * @return self
+	 */
+	public static function get_instance(): self {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
 
 	// -------------------------------------------------------------------------
 	// Properties

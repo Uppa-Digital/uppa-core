@@ -189,6 +189,12 @@ class UPPA_Core {
 	private function define_public_hooks(): void {
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->public, 'enqueue_scripts' );
+
+		// Payment AJAX — both logged-in (wp_ajax_) and guest (wp_ajax_nopriv_) variants.
+		$this->loader->add_action( 'wp_ajax_uppa_init_payment',        $this->public, 'ajax_init_payment' );
+		$this->loader->add_action( 'wp_ajax_nopriv_uppa_init_payment',  $this->public, 'ajax_init_payment' );
+		$this->loader->add_action( 'wp_ajax_uppa_verify_payment',       $this->public, 'ajax_verify_payment' );
+		$this->loader->add_action( 'wp_ajax_nopriv_uppa_verify_payment', $this->public, 'ajax_verify_payment' );
 	}
 
 	// -------------------------------------------------------------------------
