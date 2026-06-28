@@ -1,0 +1,32 @@
+{
+  "name": "uppa-core",
+  "version": "1.0.0",
+  "description": "Companion functionality plugin for the UPPA Base parent theme.",
+  "private": true,
+  "scripts": {
+    "lint:php": "phpcs --standard=WordPress .",
+    "lint:js": "eslint admin/js/ public/js/",
+    "lint": "npm run lint:php && npm run lint:js",
+    "pot": "wp i18n make-pot . languages/uppa-core.pot"
+  },
+  "devDependencies": {
+    "@wordpress/eslint-plugin": "^21.0.0",
+    "eslint": "^8.57.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:@wordpress/eslint-plugin/recommended"
+    ],
+    "env": {
+      "browser": true,
+      "es2022": true
+    },
+    "globals": {
+      "uppaCore": "readonly"
+    },
+    "ignorePatterns": [
+      "node_modules/",
+      "vendor/"
+    ]
+  }
+}

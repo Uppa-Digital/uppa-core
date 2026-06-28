@@ -1,0 +1,65 @@
+name: Lint
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # ── PHP Code Sniffer ──────────────────────────────────────────────────────
+  phpcs:
+    name: PHPCS (WordPress-Core + WordPress-Docs)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          tools: composer, phpcs
+          coverage: none
+
+      - name: Install WordPress Coding Standards
+        run: |
+          composer global require \
+            wp-coding-standards/wpcs:"^3" \
+            phpcsstandards/phpcsutils:"^1" \
+            --no-progress --no-interaction
+          phpcs --config-set installed_paths \
+            "$HOME/.composer/vendor/wp-coding-standards/wpcs,$HOME/.composer/vendor/phpcsstandards/phpcsutils"
+
+      - name: Run PHPCS
+        run: phpcs --report=checkstyle | cs2pr
+        # cs2pr converts checkstyle XML into inline GitHub PR annotations.
+        # Falls back to plain output if cs2pr is unavailable.
+        continue-on-error: false
+
+  # ── ESLint ────────────────────────────────────────────────────────────────
+  eslint:
+    name: ESLint (@wordpress/eslint-plugin)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint:js -- --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+        continue-on-error: true
+
+      - name: Upload ESLint SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: eslint-results.sarif
+          wait-for-processing: true

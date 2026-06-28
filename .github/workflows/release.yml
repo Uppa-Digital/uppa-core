@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  # ── GitHub Release ─────────────────────────────────────────────────────────
+  github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Derive version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build release archive
+        run: |
+          mkdir -p dist
+          zip -r "dist/uppa-core-${{ steps.version.outputs.VERSION }}.zip" . \
+            --exclude "*.git*"           \
+            --exclude "dist/*"           \
+            --exclude ".github/*"        \
+            --exclude "node_modules/*"   \
+            --exclude "vendor/*"         \
+            --exclude "phpcs.xml"        \
+            --exclude "package*.json"    \
+            --exclude "*.DS_Store"       \
+            --exclude "*.map"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "UPPA Core ${{ steps.version.outputs.VERSION }}"
+          body_path: CHANGELOG.md
+          files: dist/uppa-core-${{ steps.version.outputs.VERSION }}.zip
+
+  # ── WordPress.org SVN Deploy ───────────────────────────────────────────────
+  wporg-deploy:
+    name: Deploy to WordPress.org Plugin SVN
+    runs-on: ubuntu-latest
+    needs: github-release   # Only deploy after the GH release succeeds.
+
+    environment:
+      name: wordpress-org
+      url: https://wordpress.org/plugins/uppa-core/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to WordPress.org SVN
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          # Secrets must be added to the repository under Settings → Secrets.
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG:         uppa-core
+          # Build dir is the repo root; the action handles assets/ separately
+          # if a .wordpress-org/ or assets/ directory exists at the root.
+          BUILD_DIR:    .

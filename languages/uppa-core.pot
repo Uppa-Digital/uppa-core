@@ -1,0 +1,39 @@
+# Copyright (C) 2024 UPPA Digital
+# This file is distributed under the same license as the UPPA Core plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: UPPA Core 1.0.0\n"
+"Report-Msgid-Bugs-To: https://uppadigital.com\n"
+"POT-Creation-Date: 2024-01-01T00:00:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2024-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: WP-CLI 2.x\n"
+"X-Domain: uppa-core\n"
+
+#. Plugin Name of the plugin
+msgid "UPPA Core"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://uppadigital.com/plugins/uppa-core"
+msgstr ""
+
+#. Description of the plugin
+msgid "Core functionality plugin for UPPA Digital client builds — CPT management, ACF bridge, payment integrations, and shared utilities."
+msgstr ""
+
+#. Author of the plugin
+msgid "UPPA Digital"
+msgstr ""
+
+#: admin/class-uppa-admin.php
+msgid "UPPA Core"
+msgstr ""
+
+#: admin/partials/uppa-admin-display.php
+msgid "UPPA Core settings will appear here."
+msgstr ""
