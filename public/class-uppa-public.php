@@ -120,6 +120,69 @@ class UPPA_Public {
 	}
 
 	// -------------------------------------------------------------------------
+	// Automatic front-end enhancements
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Inject lazy-loading attributes on every WordPress attachment image.
+	 *
+	 * Hooked to wp_get_attachment_image_attributes. Only sets loading and
+	 * decoding when the caller has not already supplied them, so explicit
+	 * overrides (e.g. loading="eager" on the LCP hero image) are respected.
+	 *
+	 * @param array<string, string> $attr Existing attribute array from WordPress.
+	 * @return array<string, string>
+	 */
+	public function add_lazy_loading_defaults( array $attr ): array {
+		if ( ! isset( $attr['loading'] ) ) {
+			$attr['loading'] = 'lazy';
+		}
+		if ( ! isset( $attr['decoding'] ) ) {
+			$attr['decoding'] = 'async';
+		}
+		return $attr;
+	}
+
+	/**
+	 * Output Organization JSON-LD schema on wp_head.
+	 *
+	 * Uses the site name, URL, and Custom Logo (Customizer) to build a
+	 * schema.org/Organization block. Disable with:
+	 *   add_filter( 'uppa_core_output_organization_schema', '__return_false' );
+	 *
+	 * @return void
+	 */
+	public function output_organization_schema(): void {
+		if ( ! apply_filters( 'uppa_core_output_organization_schema', true ) ) {
+			return;
+		}
+		echo UPPA_SEO_Utils::schema_organization(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- method returns pre-escaped JSON-LD script tag.
+	}
+
+	/**
+	 * Output BreadcrumbList JSON-LD schema on wp_head for content pages.
+	 *
+	 * Fires on singular posts/pages, archives, search, and 404 — skips the
+	 * front page (a one-item "Home" trail has no SEO value as a BreadcrumbList).
+	 * Disable with:
+	 *   add_filter( 'uppa_core_output_breadcrumb_schema', '__return_false' );
+	 *
+	 * @return void
+	 */
+	public function output_breadcrumb_schema(): void {
+		if ( is_front_page() ) {
+			return;
+		}
+		if ( ! apply_filters( 'uppa_core_output_breadcrumb_schema', true ) ) {
+			return;
+		}
+		$crumbs = UPPA_SEO_Utils::get_breadcrumbs();
+		if ( count( $crumbs ) > 1 ) {
+			echo UPPA_SEO_Utils::schema_breadcrumb( $crumbs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- method returns pre-escaped JSON-LD script tag.
+		}
+	}
+
+	// -------------------------------------------------------------------------
 	// AJAX: payment initialisation
 	// -------------------------------------------------------------------------
 

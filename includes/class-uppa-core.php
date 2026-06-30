@@ -182,6 +182,16 @@ class UPPA_Core {
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->public, 'enqueue_scripts' );
 
+		// Automatically inject loading="lazy" + decoding="async" on all WP attachment images.
+		$this->loader->add_filter( 'wp_get_attachment_image_attributes', $this->public, 'add_lazy_loading_defaults' );
+
+		// WebP upload support (WordPress 5.8+ has it natively; this covers older installs).
+		$this->loader->add_filter( 'upload_mimes', null, [ 'UPPA_Image_Utils', 'add_webp_support' ] );
+
+		// JSON-LD schema in <head> — both filterable off by the theme if it handles its own schema.
+		$this->loader->add_action( 'wp_head', $this->public, 'output_organization_schema', 1 );
+		$this->loader->add_action( 'wp_head', $this->public, 'output_breadcrumb_schema', 2 );
+
 		// Payment AJAX — both logged-in (wp_ajax_) and guest (wp_ajax_nopriv_) variants.
 		$this->loader->add_action( 'wp_ajax_uppa_init_payment',        $this->public, 'ajax_init_payment' );
 		$this->loader->add_action( 'wp_ajax_nopriv_uppa_init_payment',  $this->public, 'ajax_init_payment' );
