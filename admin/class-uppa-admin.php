@@ -102,7 +102,14 @@ class UPPA_Admin {
 		if ( ! in_array( $hook_suffix, $this->page_hooks, true ) ) {
 			return;
 		}
-		// TODO: enqueue admin JS when needed.
+
+		wp_enqueue_script(
+			'uppa-core-admin',
+			UPPA_CORE_URI . 'admin/js/uppa-admin.js',
+			[],
+			$this->version,
+			true
+		);
 	}
 
 	// -------------------------------------------------------------------------
@@ -271,8 +278,9 @@ class UPPA_Admin {
 			return [];
 		}
 
-		$clean = [];
-		$keys  = [
+		$clean    = [];
+		$existing = (array) get_option( self::OPTION_NAME, [] );
+		$keys     = [
 			'paystack_public_key',
 			'paystack_secret_key',
 			'flw_public_key',
@@ -280,9 +288,17 @@ class UPPA_Admin {
 		];
 
 		foreach ( $keys as $key ) {
-			$clean[ $key ] = isset( $raw[ $key ] )
-				? sanitize_text_field( trim( (string) $raw[ $key ] ) )
-				: '';
+			$submitted = sanitize_text_field( trim( (string) ( $raw[ $key ] ?? '' ) ) );
+
+			// Secret key fields render with an empty value so the stored key is
+			// never exposed in the page source. When the user leaves the field
+			// blank it means "keep the existing key", not "delete it".
+			$is_secret = str_ends_with( $key, '_secret_key' );
+			if ( $is_secret && '' === $submitted ) {
+				$clean[ $key ] = $existing[ $key ] ?? '';
+			} else {
+				$clean[ $key ] = $submitted;
+			}
 		}
 
 		return $clean;

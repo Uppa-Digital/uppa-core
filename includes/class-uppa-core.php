@@ -129,6 +129,9 @@ class UPPA_Core {
 		require_once UPPA_CORE_DIR . 'includes/integrations/class-uppa-paystack.php';
 		require_once UPPA_CORE_DIR . 'includes/integrations/class-uppa-flutterwave.php';
 
+		// Shortcodes.
+		require_once UPPA_CORE_DIR . 'includes/class-uppa-shortcodes.php';
+
 		// Surface controllers.
 		require_once UPPA_CORE_DIR . 'admin/class-uppa-admin.php';
 		require_once UPPA_CORE_DIR . 'public/class-uppa-public.php';
@@ -181,6 +184,9 @@ class UPPA_Core {
 	private function define_public_hooks(): void {
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->public, 'enqueue_scripts' );
+
+		// Register [uppa_pay] and other shortcodes.
+		UPPA_Shortcodes::register();
 
 		// Automatically inject loading="lazy" + decoding="async" on all WP attachment images.
 		$this->loader->add_filter( 'wp_get_attachment_image_attributes', $this->public, 'add_lazy_loading_defaults' );

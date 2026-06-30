@@ -1,5 +1,112 @@
 /**
  * UPPA Core — public stylesheet.
  *
+ * Styles for [uppa_pay] payment forms. All rules are namespaced under
+ * .uppa-pay-form so they don't bleed into theme styles.
+ *
  * @package uppa-core
  */
+
+/* ── Form wrapper ─────────────────────────────────────────── */
+
+.uppa-pay-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	max-width: 480px;
+}
+
+/* ── Fields ───────────────────────────────────────────────── */
+
+.uppa-pay-form__field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+}
+
+.uppa-pay-form__field label {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: currentColor;
+}
+
+.uppa-pay-form__field input {
+	padding: 0.625rem 0.875rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	width: 100%;
+	box-sizing: border-box;
+	transition: border-color 0.15s ease;
+}
+
+.uppa-pay-form__field input:focus {
+	outline: none;
+	border-color: #2271b1;
+	box-shadow: 0 0 0 2px rgba( 34, 113, 177, 0.25 );
+}
+
+/* ── Actions row ──────────────────────────────────────────── */
+
+.uppa-pay-form__actions {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+/* ── Submit button ────────────────────────────────────────── */
+
+.uppa-pay-form__submit {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 0.625rem 1.5rem;
+	font-size: 1rem;
+	font-weight: 600;
+	line-height: 1.5;
+	color: #fff;
+	background: #2271b1;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.uppa-pay-form__submit:hover {
+	background: #135e96;
+}
+
+.uppa-pay-form__submit:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* ── Spinner ──────────────────────────────────────────────── */
+
+.uppa-pay-form__spinner {
+	display: inline-block;
+	width: 1.125rem;
+	height: 1.125rem;
+	border: 2px solid rgba( 0, 0, 0, 0.12 );
+	border-top-color: #2271b1;
+	border-radius: 50%;
+	animation: uppa-spin 0.65s linear infinite;
+}
+
+@keyframes uppa-spin {
+	to { transform: rotate( 360deg ); }
+}
+
+/* ── Error message ────────────────────────────────────────── */
+
+.uppa-pay-form__error {
+	margin: 0;
+	padding: 0.625rem 0.875rem;
+	font-size: 0.875rem;
+	color: #d63638;
+	background: #fce8e8;
+	border: 1px solid #f7b9b9;
+	border-radius: 4px;
+}
