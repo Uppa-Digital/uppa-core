@@ -99,10 +99,6 @@ class UPPA_Admin {
 	 * @return void
 	 */
 	public function enqueue_scripts( string $hook_suffix ): void {
-		if ( ! in_array( $hook_suffix, $this->page_hooks, true ) ) {
-			return;
-		}
-
 		wp_enqueue_script(
 			'uppa-core-admin',
 			UPPA_CORE_URI . 'admin/js/uppa-admin.js',
@@ -110,6 +106,18 @@ class UPPA_Admin {
 			$this->version,
 			true
 		);
+
+		wp_localize_script(
+			'uppa-core-admin',
+			'uppaCoreAdmin',
+			[ 'ajaxUrl' => admin_url( 'admin-ajax.php' ) ]
+		);
+
+		// Password toggles only make sense on the plugin's own settings pages.
+		// Pass a flag so the JS can gate that behaviour.
+		if ( in_array( $hook_suffix, $this->page_hooks, true ) ) {
+			wp_add_inline_script( 'uppa-core-admin', 'window.uppaCoreAdminPage = true;', 'before' );
+		}
 	}
 
 	// -------------------------------------------------------------------------
@@ -391,17 +399,39 @@ class UPPA_Admin {
 	 * @return void
 	 */
 	public function maybe_show_theme_notice(): void {
-		$theme    = wp_get_theme();
-		$is_uppa  = 'UPPA Base' === $theme->get( 'Name' )
+		$theme   = wp_get_theme();
+		$is_uppa = 'UPPA Base' === $theme->get( 'Name' )
 				|| 'UPPA Base' === ( $theme->parent() ? $theme->parent()->get( 'Name' ) : '' );
 
 		if ( $is_uppa ) {
 			return;
 		}
 
-		echo '<div class="notice notice-warning is-dismissible"><p>' .
-			esc_html__( 'UPPA Core works best with the UPPA Base parent theme. Some integration features will not be available with the current theme.', 'uppa-core' ) .
-			'</p></div>';
+		// Respect the user's per-account dismissal.
+		if ( get_user_meta( get_current_user_id(), 'uppa_core_theme_notice_dismissed', true ) ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-warning is-dismissible" data-uppa-dismiss-nonce="%s" id="uppa-theme-notice"><p>%s</p></div>',
+			esc_attr( wp_create_nonce( 'uppa_dismiss_theme_notice' ) ),
+			esc_html__( 'UPPA Core works best with the UPPA Base parent theme. Some integration features will not be available with the current theme.', 'uppa-core' )
+		);
+	}
+
+	/**
+	 * AJAX handler — record that the current user dismissed the theme notice.
+	 *
+	 * Stores a flag in user meta so the notice is not shown again for this user.
+	 *
+	 * @return never
+	 */
+	public function ajax_dismiss_theme_notice(): never {
+		check_ajax_referer( 'uppa_dismiss_theme_notice', 'nonce' );
+
+		update_user_meta( get_current_user_id(), 'uppa_core_theme_notice_dismissed', '1' );
+
+		wp_send_json_success();
 	}
 
 	// -------------------------------------------------------------------------

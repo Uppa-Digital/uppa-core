@@ -171,6 +171,9 @@ class UPPA_Core {
 		$this->loader->add_action( 'admin_menu', $this->admin, 'register_menu' );
 		$this->loader->add_action( 'admin_init', $this->admin, 'register_settings' );
 		$this->loader->add_action( 'admin_notices', $this->admin, 'maybe_show_theme_notice' );
+
+		// AJAX: dismiss the "not using UPPA Base" admin notice permanently per user.
+		$this->loader->add_action( 'wp_ajax_uppa_dismiss_theme_notice', $this->admin, 'ajax_dismiss_theme_notice' );
 	}
 
 	/**

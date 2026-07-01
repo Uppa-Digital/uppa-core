@@ -27,6 +27,14 @@ $registered_cpts   = UPPA_CPT_Manager::get_registered();
 
 // --- ACF ---
 $acf_active        = UPPA_ACF_Bridge::is_acf_active();
+
+// --- Payment gateway key status ---
+$ps  = UPPA_Paystack::get_instance();
+$flw = UPPA_Flutterwave::get_instance();
+$ps_pub_configured  = '' !== $ps->get_public_key();
+$ps_sec_configured  = $ps->has_secret_key();
+$flw_pub_configured = '' !== $flw->get_public_key();
+$flw_sec_configured = $flw->has_secret_key();
 ?>
 <div class="wrap uppa-admin-wrap">
 
@@ -114,6 +122,90 @@ $acf_active        = UPPA_ACF_Bridge::is_acf_active();
 					</tbody>
 				</table>
 			<?php endif; ?>
+		</div>
+
+		<!-- ── Payment Gateways ─────────────────────────────────── -->
+		<div class="uppa-card uppa-card--wide">
+			<h2 class="uppa-card__title"><?php esc_html_e( 'Payment Gateways', 'uppa-core' ); ?></h2>
+			<table class="wp-list-table widefat fixed striped">
+				<thead>
+					<tr>
+						<th><?php esc_html_e( 'Gateway', 'uppa-core' ); ?></th>
+						<th><?php esc_html_e( 'Public Key', 'uppa-core' ); ?></th>
+						<th><?php esc_html_e( 'Secret Key', 'uppa-core' ); ?></th>
+						<th><?php esc_html_e( 'Mode', 'uppa-core' ); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>Paystack</strong></td>
+						<td>
+							<?php if ( $ps_pub_configured ) : ?>
+								<span class="uppa-badge uppa-badge--ok">&#10003; <?php esc_html_e( 'Set', 'uppa-core' ); ?></span>
+							<?php else : ?>
+								<span class="uppa-badge uppa-badge--warn">&#9888; <?php esc_html_e( 'Not set', 'uppa-core' ); ?></span>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php if ( $ps_sec_configured ) : ?>
+								<span class="uppa-badge uppa-badge--ok">&#10003; <?php esc_html_e( 'Set', 'uppa-core' ); ?></span>
+							<?php else : ?>
+								<span class="uppa-badge uppa-badge--warn">&#9888; <?php esc_html_e( 'Not set', 'uppa-core' ); ?></span>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php if ( $ps_pub_configured ) : ?>
+								<?php
+								$pk    = $ps->get_public_key();
+								$mode  = ( str_starts_with( $pk, 'pk_live_' ) ) ? 'live' : 'test';
+								$badge = ( 'live' === $mode ) ? 'uppa-badge--ok' : 'uppa-badge--neutral';
+								?>
+								<span class="uppa-badge <?php echo esc_attr( $badge ); ?>">
+									<?php echo esc_html( ucfirst( $mode ) ); ?>
+								</span>
+							<?php else : ?>
+								<span class="uppa-badge uppa-badge--neutral"><?php esc_html_e( '—', 'uppa-core' ); ?></span>
+							<?php endif; ?>
+						</td>
+					</tr>
+					<tr>
+						<td><strong>Flutterwave</strong></td>
+						<td>
+							<?php if ( $flw_pub_configured ) : ?>
+								<span class="uppa-badge uppa-badge--ok">&#10003; <?php esc_html_e( 'Set', 'uppa-core' ); ?></span>
+							<?php else : ?>
+								<span class="uppa-badge uppa-badge--warn">&#9888; <?php esc_html_e( 'Not set', 'uppa-core' ); ?></span>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php if ( $flw_sec_configured ) : ?>
+								<span class="uppa-badge uppa-badge--ok">&#10003; <?php esc_html_e( 'Set', 'uppa-core' ); ?></span>
+							<?php else : ?>
+								<span class="uppa-badge uppa-badge--warn">&#9888; <?php esc_html_e( 'Not set', 'uppa-core' ); ?></span>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php if ( $flw_pub_configured ) : ?>
+								<?php
+								$fpk   = $flw->get_public_key();
+								$fmode = ( str_starts_with( $fpk, 'FLWPUBK-' ) ) ? 'live' : 'test';
+								$fbadge = ( 'live' === $fmode ) ? 'uppa-badge--ok' : 'uppa-badge--neutral';
+								?>
+								<span class="uppa-badge <?php echo esc_attr( $fbadge ); ?>">
+									<?php echo esc_html( ucfirst( $fmode ) ); ?>
+								</span>
+							<?php else : ?>
+								<span class="uppa-badge uppa-badge--neutral"><?php esc_html_e( '—', 'uppa-core' ); ?></span>
+							<?php endif; ?>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<p class="description" style="margin-top:.5rem">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=uppa-core-settings' ) ); ?>">
+					<?php esc_html_e( 'Manage API keys →', 'uppa-core' ); ?>
+				</a>
+			</p>
 		</div>
 
 		<!-- ── Plugin Info ──────────────────────────────────────── -->

@@ -34,7 +34,8 @@ class UPPA_Shortcodes {
 	 * @return void
 	 */
 	public static function register(): void {
-		add_shortcode( 'uppa_pay', [ __CLASS__, 'render_pay_form' ] );
+		add_shortcode( 'uppa_pay',    [ __CLASS__, 'render_pay_form'    ] );
+		add_shortcode( 'uppa_verify', [ __CLASS__, 'render_verify_area' ] );
 	}
 
 	/**
@@ -130,6 +131,60 @@ class UPPA_Shortcodes {
 
 			<p class="uppa-pay-form__error" hidden role="alert"></p>
 		</form>
+		<?php
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Render the [uppa_verify] payment result area.
+	 *
+	 * Place this shortcode on the page your gateway redirects to after payment.
+	 * The JS layer detects the gateway callback URL parameters and fires
+	 * verification automatically; this shortcode provides the HTML container
+	 * that displays the result without a page reload.
+	 *
+	 * The `uppa:payment-verified` CustomEvent is dispatched on window after
+	 * verification completes so themes can add additional behaviour:
+	 *
+	 *   window.addEventListener('uppa:payment-verified', function (e) {
+	 *       console.log(e.detail); // { success: true, data: { ... } }
+	 *   });
+	 *
+	 * Usage:
+	 *
+	 *   [uppa_verify
+	 *     success_message="Thank you! Your payment was successful."
+	 *     failure_message="Payment could not be confirmed. Please contact us."
+	 *   ]
+	 *
+	 * @param array<string, string>|string $atts Shortcode attributes.
+	 * @return string HTML output for the verification result container.
+	 */
+	public static function render_verify_area( array|string $atts ): string {
+		$atts = shortcode_atts(
+			[
+				'success_message' => __( 'Your payment was successful. Thank you!', 'uppa-core' ),
+				'failure_message' => __( 'We could not confirm your payment. Please contact us if you were charged.', 'uppa-core' ),
+				'pending_message' => __( 'Verifying your payment…', 'uppa-core' ),
+			],
+			$atts,
+			'uppa_verify'
+		);
+
+		ob_start();
+		?>
+		<div
+			class="uppa-verify-area"
+			data-success="<?php echo esc_attr( $atts['success_message'] ); ?>"
+			data-failure="<?php echo esc_attr( $atts['failure_message'] ); ?>"
+			role="status"
+			aria-live="polite"
+		>
+			<p class="uppa-verify-area__pending">
+				<span class="uppa-pay-form__spinner" aria-hidden="true"></span>
+				<?php echo esc_html( $atts['pending_message'] ); ?>
+			</p>
+		</div>
 		<?php
 		return (string) ob_get_clean();
 	}

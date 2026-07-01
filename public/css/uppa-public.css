@@ -110,3 +110,38 @@
 	border: 1px solid #f7b9b9;
 	border-radius: 4px;
 }
+
+/* ── [uppa_verify] result area ────────────────────────────── */
+
+.uppa-verify-area {
+	padding: 1.25rem;
+	border-radius: 4px;
+}
+
+.uppa-verify-area__pending {
+	display: flex;
+	align-items: center;
+	gap: 0.625rem;
+	color: #50575e;
+	font-size: 0.9375rem;
+}
+
+.uppa-verify-area__result {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	padding: 1rem 1.25rem;
+	border-radius: 4px;
+}
+
+.uppa-verify-area__result--ok {
+	color: #00650a;
+	background: #edfaef;
+	border: 1px solid #a7d7ac;
+}
+
+.uppa-verify-area__result--fail {
+	color: #d63638;
+	background: #fce8e8;
+	border: 1px solid #f7b9b9;
+}

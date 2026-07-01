@@ -208,10 +208,91 @@
 		} );
 	}
 
-	if ( document.readyState === 'loading' ) {
-		document.addEventListener( 'DOMContentLoaded', initPayForms );
-	} else {
+	// -------------------------------------------------------------------------
+	// [uppa_verify] callback page auto-verification
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Update the [uppa_verify] result area with success or failure markup.
+	 *
+	 * @param {HTMLElement} area    The .uppa-verify-area element.
+	 * @param {boolean}     success True for a confirmed payment.
+	 * @param {string}      message Human-readable result text.
+	 */
+	function showVerifyResult( area, success, message ) {
+		area.innerHTML = '<p class="uppa-verify-area__result uppa-verify-area__result--'
+			+ ( success ? 'ok' : 'fail' ) + '">'
+			+ document.createTextNode( message ).textContent
+			+ '</p>';
+
+		window.dispatchEvent(
+			new CustomEvent( 'uppa:payment-verified', {
+				bubbles: true,
+				detail:  { success: success, message: message },
+			} )
+		);
+	}
+
+	/**
+	 * Auto-verify a payment when the current page is a gateway callback URL.
+	 *
+	 * Reads gateway and identifiers from data.isCallback (populated server-side
+	 * by UPPA_Public::detect_payment_callback()). Updates the [uppa_verify]
+	 * area element if one exists on the page.
+	 */
+	function initCallbackVerification() {
+		if ( ! data.isCallback ) {
+			return;
+		}
+
+		const cb   = data.isCallback;
+		const area = document.querySelector( '.uppa-verify-area' );
+
+		// For Flutterwave, only proceed when the gateway reports a successful
+		// transaction (status === 'successful'). Other statuses (cancelled,
+		// failed) should not trigger a verification round-trip.
+		if ( 'flutterwave' === cb.gateway && 'successful' !== cb.status ) {
+			if ( area ) {
+				const msg = area.dataset.failure || 'Payment was not completed.';
+				showVerifyResult( area, false, msg );
+			}
+			return;
+		}
+
+		const identifiers = 'paystack' === cb.gateway
+			? { reference:      cb.reference }
+			: { transaction_id: cb.transaction_id };
+
+		verifyPayment( cb.gateway, identifiers )
+			.then( function ( response ) {
+				if ( ! area ) {
+					return;
+				}
+				if ( response.success ) {
+					showVerifyResult( area, true,  area.dataset.success || 'Payment confirmed.' );
+				} else {
+					const msg = ( response.data && response.data.message )
+						? response.data.message
+						: ( area.dataset.failure || 'Payment could not be confirmed.' );
+					showVerifyResult( area, false, msg );
+				}
+			} )
+			.catch( function () {
+				if ( area ) {
+					showVerifyResult( area, false, area.dataset.failure || 'Verification failed.' );
+				}
+			} );
+	}
+
+	function init() {
 		initPayForms();
+		initCallbackVerification();
+	}
+
+	if ( document.readyState === 'loading' ) {
+		document.addEventListener( 'DOMContentLoaded', init );
+	} else {
+		init();
 	}
 
 	// -------------------------------------------------------------------------

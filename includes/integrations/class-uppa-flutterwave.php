@@ -334,6 +334,17 @@ class UPPA_Flutterwave {
 		return sanitize_text_field( $this->public_key );
 	}
 
+	/**
+	 * Return true when a secret key has been configured.
+	 *
+	 * Does not expose the key itself — used only for dashboard status display.
+	 *
+	 * @return bool
+	 */
+	public function has_secret_key(): bool {
+		return '' !== $this->secret_key;
+	}
+
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------

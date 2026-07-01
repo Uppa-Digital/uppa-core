@@ -115,8 +115,47 @@ class UPPA_Public {
 				'flutterwavePublicKey' => UPPA_Flutterwave::get_instance()->get_public_key(),
 				'currency'             => 'NGN',
 				'siteUrl'              => home_url(),
+				// Signals that the current page is a payment callback URL so
+				// the JS auto-fires verification on DOMContentLoaded.
+				'isCallback'           => self::detect_payment_callback(),
 			]
 		);
+	}
+
+	// -------------------------------------------------------------------------
+	// Payment callback detection
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Detect whether the current URL is a gateway payment callback.
+	 *
+	 * Paystack appends ?reference=xxx&trxref=xxx to the callback URL.
+	 * Flutterwave appends ?status=successful&tx_ref=xxx&transaction_id=xxx.
+	 *
+	 * Returns an array with enough data for the JS layer to auto-verify,
+	 * or false when the current page is not a recognised callback URL.
+	 *
+	 * @return array{gateway: string, reference?: string, transaction_id?: string}|false
+	 */
+	private static function detect_payment_callback(): array|false {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only URL param detection, no state change here.
+		if ( ! empty( $_GET['reference'] ) && ! empty( $_GET['trxref'] ) ) {
+			return [
+				'gateway'   => 'paystack',
+				'reference' => sanitize_text_field( wp_unslash( $_GET['reference'] ) ),
+			];
+		}
+
+		if ( isset( $_GET['status'] ) && ! empty( $_GET['transaction_id'] ) ) {
+			return [
+				'gateway'        => 'flutterwave',
+				'transaction_id' => sanitize_text_field( wp_unslash( $_GET['transaction_id'] ) ),
+				'status'         => sanitize_key( wp_unslash( $_GET['status'] ) ),
+			];
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		return false;
 	}
 
 	// -------------------------------------------------------------------------
