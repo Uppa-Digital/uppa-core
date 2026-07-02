@@ -295,6 +295,19 @@ class UPPA_Paystack {
 		return '' !== $this->secret_key;
 	}
 
+	/**
+	 * Return the secret key for use in webhook signature verification only.
+	 *
+	 * This value must never be sent to the browser or logged. It is exposed
+	 * here solely so UPPA_Webhooks can perform HMAC-SHA512 verification of
+	 * the X-Paystack-Signature header in the server-side webhook endpoint.
+	 *
+	 * @return string The raw secret key, or empty string when not configured.
+	 */
+	public function get_secret_key_for_webhook(): string {
+		return $this->secret_key;
+	}
+
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------

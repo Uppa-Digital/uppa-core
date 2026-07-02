@@ -45,11 +45,14 @@ class UPPA_Shortcodes {
 	 * @return string HTML output for the payment form.
 	 */
 	public static function render_pay_form( array|string $atts ): string {
+		$settings         = (array) get_option( 'uppa_core_settings', [] );
+		$default_currency = strtoupper( sanitize_text_field( $settings['default_currency'] ?? '' ) ) ?: 'NGN';
+
 		$atts = shortcode_atts(
 			[
 				'gateway'      => 'paystack',
 				'amount'       => '0',
-				'currency'     => 'NGN',
+				'currency'     => $default_currency,
 				'label'        => __( 'Pay Now', 'uppa-core' ),
 				'class'        => '',
 				'redirect_url' => '',

@@ -113,13 +113,31 @@ class UPPA_Public {
 				'nonce'                => wp_create_nonce( self::NONCE_ACTION ),
 				'paystackPublicKey'    => UPPA_Paystack::get_instance()->get_public_key(),
 				'flutterwavePublicKey' => UPPA_Flutterwave::get_instance()->get_public_key(),
-				'currency'             => 'NGN',
+				'currency'             => self::get_default_currency(),
 				'siteUrl'              => home_url(),
 				// Signals that the current page is a payment callback URL so
 				// the JS auto-fires verification on DOMContentLoaded.
 				'isCallback'           => self::detect_payment_callback(),
 			]
 		);
+	}
+
+	// -------------------------------------------------------------------------
+	// Settings helpers
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Return the configured default currency code, falling back to 'NGN'.
+	 *
+	 * Reads the uppa_core_settings option so the value comes from the admin
+	 * Settings page rather than being hard-coded.
+	 *
+	 * @return string Uppercase ISO 4217 currency code.
+	 */
+	private static function get_default_currency(): string {
+		$settings = (array) get_option( 'uppa_core_settings', [] );
+		$currency = strtoupper( sanitize_text_field( $settings['default_currency'] ?? '' ) );
+		return $currency ?: 'NGN';
 	}
 
 	// -------------------------------------------------------------------------

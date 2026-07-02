@@ -345,6 +345,21 @@ class UPPA_Flutterwave {
 		return '' !== $this->secret_key;
 	}
 
+	/**
+	 * Return the Flutterwave webhook secret hash for server-side signature
+	 * verification in UPPA_Webhooks::handle_flutterwave().
+	 *
+	 * This is the value you set in Flutterwave dashboard → Settings → Webhooks
+	 * → Secret Hash. It is separate from the API secret key and is stored under
+	 * 'flw_webhook_hash' in the uppa_core_settings option.
+	 *
+	 * @return string The raw webhook hash, or empty string when not configured.
+	 */
+	public function get_webhook_hash_for_webhook(): string {
+		$settings = (array) get_option( 'uppa_core_settings', [] );
+		return sanitize_text_field( $settings['flw_webhook_hash'] ?? '' );
+	}
+
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------

@@ -22,7 +22,8 @@
       "es2022": true
     },
     "globals": {
-      "uppaCore": "readonly"
+      "uppaCore":      "readonly",
+      "uppaCoreAdmin": "readonly"
     },
     "ignorePatterns": [
       "node_modules/",

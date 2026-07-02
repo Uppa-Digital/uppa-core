@@ -39,6 +39,13 @@ class UPPA_Admin {
 	private const OPTION_NAME = 'uppa_core_settings';
 
 	/**
+	 * Settings section ID for general options.
+	 *
+	 * @var string
+	 */
+	private const SECTION_GENERAL = 'uppa_core_general';
+
+	/**
 	 * Settings section ID used with the WordPress Settings API.
 	 *
 	 * @var string
@@ -193,6 +200,28 @@ class UPPA_Admin {
 			]
 		);
 
+		// --- General section ---
+		add_settings_section(
+			self::SECTION_GENERAL,
+			__( 'General', 'uppa-core' ),
+			static function (): void {
+				echo '<p>' . esc_html__( 'Site-wide defaults for payment forms.', 'uppa-core' ) . '</p>';
+			},
+			'uppa-core-settings'
+		);
+
+		add_settings_field(
+			'default_currency',
+			__( 'Default Currency', 'uppa-core' ),
+			[ $this, 'render_currency_field' ],
+			'uppa-core-settings',
+			self::SECTION_GENERAL,
+			[
+				'field' => 'default_currency',
+				'desc'  => __( 'Used by payment forms that do not specify a currency attribute.', 'uppa-core' ),
+			]
+		);
+
 		// --- Paystack section ---
 		add_settings_section(
 			self::SECTION_PAYSTACK,
@@ -264,6 +293,23 @@ class UPPA_Admin {
 				'desc'        => __( 'Keep this key private — never expose it in client-side code.', 'uppa-core' ),
 			]
 		);
+
+		add_settings_field(
+			'flw_webhook_hash',
+			__( 'Webhook Secret Hash', 'uppa-core' ),
+			[ $this, 'render_password_field' ],
+			'uppa-core-settings',
+			self::SECTION_FLUTTERWAVE,
+			[
+				'field'       => 'flw_webhook_hash',
+				'placeholder' => __( 'Your custom secret hash', 'uppa-core' ),
+				'desc'        => sprintf(
+					/* translators: URL to Flutterwave webhook docs */
+					__( 'The secret hash you set in Flutterwave → Settings → Webhooks. Used to verify incoming webhook requests to %s.', 'uppa-core' ),
+					home_url( '/wp-json/uppa-core/v1/webhooks/flutterwave' )
+				),
+			]
+		);
 	}
 
 	// -------------------------------------------------------------------------
@@ -289,19 +335,30 @@ class UPPA_Admin {
 		$clean    = [];
 		$existing = (array) get_option( self::OPTION_NAME, [] );
 		$keys     = [
+			'default_currency',
 			'paystack_public_key',
 			'paystack_secret_key',
 			'flw_public_key',
 			'flw_secret_key',
+			'flw_webhook_hash',
 		];
+
+		// Allowed ISO 4217 currency codes supported across Paystack and Flutterwave.
+		$allowed_currencies = [ 'NGN', 'GHS', 'KES', 'ZAR', 'USD', 'EUR', 'GBP', 'UGX', 'TZS' ];
 
 		foreach ( $keys as $key ) {
 			$submitted = sanitize_text_field( trim( (string) ( $raw[ $key ] ?? '' ) ) );
 
+			if ( 'default_currency' === $key ) {
+				$upper = strtoupper( $submitted );
+				$clean[ $key ] = in_array( $upper, $allowed_currencies, true ) ? $upper : 'NGN';
+				continue;
+			}
+
 			// Secret key fields render with an empty value so the stored key is
 			// never exposed in the page source. When the user leaves the field
 			// blank it means "keep the existing key", not "delete it".
-			$is_secret = str_ends_with( $key, '_secret_key' );
+			$is_secret = str_ends_with( $key, '_secret_key' ) || str_ends_with( $key, '_webhook_hash' );
 			if ( $is_secret && '' === $submitted ) {
 				$clean[ $key ] = $existing[ $key ] ?? '';
 			} else {
@@ -315,6 +372,43 @@ class UPPA_Admin {
 	// -------------------------------------------------------------------------
 	// Field renderers (called by Settings API)
 	// -------------------------------------------------------------------------
+
+	/**
+	 * Render a currency selector for the default_currency field.
+	 *
+	 * @param array{field: string, desc?: string} $args Field metadata from add_settings_field().
+	 * @return void
+	 */
+	public function render_currency_field( array $args ): void {
+		$options  = (array) get_option( self::OPTION_NAME, [] );
+		$field    = $args['field'];
+		$current  = $options[ $field ] ?? 'NGN';
+		$name     = self::OPTION_NAME . '[' . $field . ']';
+		$desc     = $args['desc'] ?? '';
+
+		$currencies = [
+			'NGN' => 'NGN — Nigerian Naira',
+			'GHS' => 'GHS — Ghanaian Cedi',
+			'KES' => 'KES — Kenyan Shilling',
+			'UGX' => 'UGX — Ugandan Shilling',
+			'TZS' => 'TZS — Tanzanian Shilling',
+			'ZAR' => 'ZAR — South African Rand',
+			'USD' => 'USD — US Dollar',
+			'EUR' => 'EUR — Euro',
+			'GBP' => 'GBP — British Pound',
+		];
+		?>
+		<select id="<?php echo esc_attr( $field ); ?>" name="<?php echo esc_attr( $name ); ?>">
+			<?php foreach ( $currencies as $code => $label ) : ?>
+			<option value="<?php echo esc_attr( $code ); ?>"<?php selected( $current, $code ); ?>>
+				<?php echo esc_html( $label ); ?>
+			</option>
+			<?php endforeach; ?>
+		</select>
+		<?php if ( $desc ) : ?>
+			<p class="description"><?php echo esc_html( $desc ); ?></p>
+		<?php endif;
+	}
 
 	/**
 	 * Render a plain text input for a settings field.

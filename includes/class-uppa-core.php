@@ -132,6 +132,9 @@ class UPPA_Core {
 		// Shortcodes.
 		require_once UPPA_CORE_DIR . 'includes/class-uppa-shortcodes.php';
 
+		// REST API webhook endpoints.
+		require_once UPPA_CORE_DIR . 'includes/class-uppa-webhooks.php';
+
 		// Surface controllers.
 		require_once UPPA_CORE_DIR . 'admin/class-uppa-admin.php';
 		require_once UPPA_CORE_DIR . 'public/class-uppa-public.php';
@@ -190,6 +193,9 @@ class UPPA_Core {
 
 		// Register [uppa_pay] and other shortcodes.
 		UPPA_Shortcodes::register();
+
+		// Register REST API webhook endpoints.
+		$this->loader->add_action( 'rest_api_init', null, [ 'UPPA_Webhooks', 'register_routes' ] );
 
 		// Automatically inject loading="lazy" + decoding="async" on all WP attachment images.
 		$this->loader->add_filter( 'wp_get_attachment_image_attributes', $this->public, 'add_lazy_loading_defaults' );
