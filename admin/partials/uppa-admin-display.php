@@ -201,7 +201,23 @@ $flw_sec_configured = $flw->has_secret_key();
 					</tr>
 				</tbody>
 			</table>
-			<p class="description" style="margin-top:.5rem">
+			<h3 style="margin:1.2rem 0 .4rem"><?php esc_html_e( 'Webhook URLs', 'uppa-core' ); ?></h3>
+			<p class="description"><?php esc_html_e( 'Copy these into each gateway\'s dashboard to enable server-side payment confirmation.', 'uppa-core' ); ?></p>
+			<table class="uppa-info-table" style="margin-top:.5rem">
+				<tr>
+					<th style="width:110px">Paystack</th>
+					<td>
+						<code><?php echo esc_html( rest_url( 'uppa-core/v1/webhooks/paystack' ) ); ?></code>
+					</td>
+				</tr>
+				<tr>
+					<th>Flutterwave</th>
+					<td>
+						<code><?php echo esc_html( rest_url( 'uppa-core/v1/webhooks/flutterwave' ) ); ?></code>
+					</td>
+				</tr>
+			</table>
+			<p class="description" style="margin-top:.75rem">
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=uppa-core-settings' ) ); ?>">
 					<?php esc_html_e( 'Manage API keys →', 'uppa-core' ); ?>
 				</a>

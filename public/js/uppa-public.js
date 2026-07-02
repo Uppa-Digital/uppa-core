@@ -162,9 +162,9 @@
 		const args = { email, currency };
 
 		if ( 'paystack' === gateway ) {
-			// Paystack expects amount in kobo (smallest unit). The shortcode
-			// amount attribute and the user-entered value are always in the
-			// major unit (naira), so multiply here.
+			// Paystack expects the smallest currency unit (kobo, pesewas, cents).
+			// The shortcode amount attribute and user-entered value are always in
+			// the major currency unit, so multiply here.
 			args.amount = amount * 100;
 		} else {
 			// Flutterwave accepts the major currency unit directly.
